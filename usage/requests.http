@@ -1,0 +1,21 @@
+### Apply application
+
+POST http://localhost:8010/
+Content-Type: application/x-www-form-urlencoded
+
+action=apply&amount=1230&contact=Lipescu
+
+### Get status
+
+POST http://localhost:8010/
+Content-Type: application/x-www-form-urlencoded
+
+action=fetch&ticketId=1
+
+### Approve application
+
+POST http://localhost:8010/
+Content-Type: application/x-www-form-urlencoded
+
+action=approve&ticketId=1
+

@@ -105,6 +105,12 @@
     "symfony/polyfill-php81": {
         "version": "v1.24.0"
     },
+    "symfony/property-access": {
+        "version": "v6.0.3"
+    },
+    "symfony/property-info": {
+        "version": "v6.0.3"
+    },
     "symfony/routing": {
         "version": "6.0",
         "recipe": {
@@ -119,6 +125,9 @@
         ]
     },
     "symfony/runtime": {
+        "version": "v6.0.3"
+    },
+    "symfony/serializer": {
         "version": "v6.0.3"
     },
     "symfony/service-contracts": {
