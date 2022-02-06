@@ -6,6 +6,9 @@ namespace App\Service;
 
 interface LoanRepository
 {
+    /**
+     * @throws ApplicationException
+     */
     public function fetch(string|int $ticketId): LoanApplication;
 
     public function store(LoanApplication $application): Ticket;

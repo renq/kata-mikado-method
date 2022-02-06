@@ -23,7 +23,7 @@ final class LoanControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->loanController = new LoanController();
+        $this->loanController = new LoanController(new FileBasedLoanRepository());
     }
 
     /** @test */
