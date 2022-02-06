@@ -17,7 +17,7 @@ class FileBasedLoanRepository implements LoanRepository
     public const REPOSITORY_ROOT = __DIR__ . '/../../var/repository';
     public const FILE_EXTENSION = '.loan';
 
-    public static function fetch(string | int $ticketId): LoanApplication
+    public function fetch(string | int $ticketId): LoanApplication
     {
         $ticketId = (int)$ticketId;
 
@@ -32,7 +32,7 @@ class FileBasedLoanRepository implements LoanRepository
         }
     }
 
-    public static function store(LoanApplication $application): Ticket
+    public function store(LoanApplication $application): Ticket
     {
         $filesystem = new Filesystem();
         $applicationFile = self::fileFromApplication($application->getApplicationNo());
@@ -53,11 +53,11 @@ class FileBasedLoanRepository implements LoanRepository
         }
     }
 
-    public static function approve(string $ticketId): Ticket
+    public function approve(string $ticketId): Ticket
     {
-        $application = self::fetch($ticketId);
+        $application = $this->fetch($ticketId);
         $application->approve();
-        self::store($application);
+        $this->store($application);
 
         return new Ticket($application->getApplicationNo());
     }
