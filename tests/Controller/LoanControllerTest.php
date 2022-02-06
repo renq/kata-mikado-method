@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Controller\LoanController;
 use App\Service\FileBasedLoanRepository;
+use App\Service\LoanRepository;
 use JetBrains\PhpStorm\ArrayShape;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -14,6 +15,7 @@ use function glob;
 final class LoanControllerTest extends TestCase
 {
     private LoanController $loanController;
+    private LoanRepository $loanRepository;
 
     public static function setUpBeforeClass(): void
     {
@@ -23,7 +25,8 @@ final class LoanControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->loanController = new LoanController(new FileBasedLoanRepository());
+        $this->loanRepository = new FileBasedLoanRepository();
+        $this->loanController = new LoanController($this->loanRepository);
     }
 
     /** @test */
