@@ -3,40 +3,37 @@
 namespace App\Tests\Controller;
 
 use App\Controller\LoanController;
-use App\Service\FileBasedLoanRepository;
-use App\Service\LoanRepository;
 use App\Service\MemoryLoanRepository;
 use App\Tests\LoanApplicationMother;
 use JetBrains\PhpStorm\ArrayShape;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class LoanControllerTest extends TestCase
+final class LoanControllerTest extends WebTestCase
 {
-    private LoanController $loanController;
-    private LoanRepository $loanRepository;
+    private KernelBrowser $client;
+    private MemoryLoanRepository $loanRepository;
 
     protected function setUp(): void
     {
-        $this->loanRepository = new MemoryLoanRepository();
-        $this->loanController = new LoanController($this->loanRepository);
+        $this->client = self::createClient();
+        $this->loanRepository = self::getContainer()->get(MemoryLoanRepository::class);
+
     }
 
     /** @test */
     public function incompleteRequest(): void
     {
-        $request = Request::create('/');
-        $response = $this->loanController->serve($request);
-
-        self::assertEquals('{"error":"Incorrect parameters provided"}', $response->getContent());
+        $this->client->request('GET', '/');
+        self::assertEquals('{"error":"Incorrect parameters provided"}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
     public function completeApplication(): void
     {
-        $request = Request::create('/', 'GET', $this->applyParams());
-        $response = $this->loanController->serve($request);
-        self::assertEquals('{"id":1}', $response->getContent());
+        $this->client->request('GET', '/', $this->applyParams());
+
+        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
@@ -44,8 +41,8 @@ final class LoanControllerTest extends TestCase
     {
         $this->loanRepository->store(LoanApplicationMother::create(1));
 
-        $request = Request::create('/', 'POST', $this->fetchParams());
-        $response = $this->loanController->serve($request);
+        $this->client->request('POST', '/', $this->fetchParams());
+
         self::assertEquals(
             [
                 'applicationNo' => 1,
@@ -53,7 +50,7 @@ final class LoanControllerTest extends TestCase
                 'contact' => 'donald@ducks.burg',
                 'approved' => false,
             ],
-            json_decode($response->getContent(), true)
+            json_decode($this->client->getResponse()->getContent(), true)
         );
     }
 
@@ -62,9 +59,9 @@ final class LoanControllerTest extends TestCase
     {
         $this->loanRepository->store(LoanApplicationMother::create(1));
 
-        $request = Request::create('/', 'POST', $this->approveParams());
-        $response = $this->loanController->serve($request);
-        self::assertEquals('{"id":1}', $response->getContent());
+        $this->client->request('POST', '/', $this->approveParams());
+
+        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
     }
 
 
