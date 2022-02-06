@@ -3,7 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Controller\LoanController;
-use App\Service\LoanRepository;
+use App\Service\FileBasedLoanRepository;
 use JetBrains\PhpStorm\ArrayShape;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -18,7 +18,7 @@ final class LoanControllerTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         $filesystem = new Filesystem();
-        $filesystem->remove(glob(LoanRepository::REPOSITORY_ROOT . '/*.loan'));
+        $filesystem->remove(glob(FileBasedLoanRepository::REPOSITORY_ROOT . '/*.loan'));
     }
 
     protected function setUp(): void

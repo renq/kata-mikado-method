@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\LoanApplication;
-use App\Service\LoanRepository;
+use App\Service\FileBasedLoanRepository;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,7 @@ class LoanController
             $application = new LoanApplication();
             $application->setAmount($this->amountFrom($request));
             $application->setContact($this->contactFrom($request));
-            $ticket = LoanRepository::store($application);
+            $ticket = FileBasedLoanRepository::store($application);
             $normalizer = new ObjectNormalizer();
             $result = $normalizer->normalize($ticket);
         } else if ($this->isStatusRequest($request) && $this->idSpecified($request)) {
@@ -48,10 +48,10 @@ class LoanController
     public static function getNextId(): int
     {
         $filesystem = new Filesystem();
-        $filesystem->mkdir(LoanRepository::REPOSITORY_ROOT);
+        $filesystem->mkdir(FileBasedLoanRepository::REPOSITORY_ROOT);
 
         $finder = new Finder();
-        $finder->files()->in(LoanRepository::REPOSITORY_ROOT)->name('*' . LoanRepository::FILE_EXTENSION);
+        $finder->files()->in(FileBasedLoanRepository::REPOSITORY_ROOT)->name('*' . FileBasedLoanRepository::FILE_EXTENSION);
 
         return $finder->count() + 1;
     }
@@ -80,7 +80,7 @@ class LoanController
 
     private function fetchLoanInfo(string $ticketId): array
     {
-        $formerApplication = LoanRepository::fetch($ticketId);
+        $formerApplication = FileBasedLoanRepository::fetch($ticketId);
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->normalize($formerApplication);
@@ -95,7 +95,7 @@ class LoanController
     {
         $normalizer = new ObjectNormalizer();
 
-        return $normalizer->normalize(LoanRepository::approve($parameter));
+        return $normalizer->normalize(FileBasedLoanRepository::approve($parameter));
     }
 
     private function amountFrom(Request $request): int
