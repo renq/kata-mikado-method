@@ -18,14 +18,11 @@ final class LoanControllerTest extends TestCase
     private LoanController $loanController;
     private LoanRepository $loanRepository;
 
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
         $filesystem = new Filesystem();
         $filesystem->remove(glob(FileBasedLoanRepository::REPOSITORY_ROOT . '/*.loan'));
-    }
 
-    protected function setUp(): void
-    {
         $this->loanRepository = new FileBasedLoanRepository();
         $this->loanController = new LoanController($this->loanRepository);
     }
