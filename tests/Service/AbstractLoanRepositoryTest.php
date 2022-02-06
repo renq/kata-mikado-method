@@ -5,6 +5,7 @@ namespace App\Tests\Service;
 use App\Service\LoanApplication;
 use App\Service\LoanRepository;
 use App\Service\MemoryLoanRepository;
+use App\Tests\LoanApplicationMother;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractLoanRepositoryTest extends TestCase
@@ -14,7 +15,7 @@ abstract class AbstractLoanRepositoryTest extends TestCase
     /** @test */
     public function stored_application_can_be_fetched(): void
     {
-        $application = $this->createApplication();
+        $application = LoanApplicationMother::create(1);
 
         $ticket = $this->repository->store($application);
 
@@ -24,22 +25,12 @@ abstract class AbstractLoanRepositoryTest extends TestCase
     /** @test */
     public function application_can_be_approved(): void
     {
-        $application = $this->createApplication();
+        $application = LoanApplicationMother::create(1);
         $ticket = $this->repository->store($application);
 
         $this->repository->approve($ticket->getId());
 
         $storedApplication = $this->repository->fetch($ticket->getId());
         self::assertTrue($storedApplication->isApproved());
-    }
-
-    private function createApplication(): LoanApplication
-    {
-        $application = new LoanApplication();
-        $application->setApplicationNo(1);
-        $application->setAmount(100);
-        $application->setContact('test@contact.com');
-
-        return $application;
     }
 }
