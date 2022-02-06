@@ -13,7 +13,7 @@ class LoanApplicationMother
         $application = new LoanApplication();
         $application->setApplicationNo($applicationNo);
         $application->setAmount(100);
-        $application->setContact('test@contact.com');
+        $application->setContact('donald@ducks.burg');
 
         return $application;
     }
