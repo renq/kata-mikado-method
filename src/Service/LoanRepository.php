@@ -6,6 +6,8 @@ namespace App\Service;
 
 interface LoanRepository
 {
+    public static function getNextId(): int;
+
     /**
      * @throws ApplicationException
      */

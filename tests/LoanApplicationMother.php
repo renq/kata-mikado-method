@@ -10,8 +10,7 @@ class LoanApplicationMother
 {
     public static function create(int $applicationNo): LoanApplication
     {
-        $application = new LoanApplication();
-        $application->setApplicationNo($applicationNo);
+        $application = new LoanApplication($applicationNo);
         $application->setAmount(100);
         $application->setContact('donald@ducks.burg');
 

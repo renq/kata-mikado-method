@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\LoanApplication;
-use App\Service\FileBasedLoanRepository;
 use App\Service\LoanRepository;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +30,7 @@ class LoanController
     public function serve(Request $request): Response
     {
         if ($this->isApplication($request)) {
-            $application = new LoanApplication();
+            $application = new LoanApplication($this->loanRepository::getNextId());
             $application->setAmount($this->amountFrom($request));
             $application->setContact($this->contactFrom($request));
             $ticket = $this->loanRepository->store($application);
@@ -48,17 +45,6 @@ class LoanController
         }
 
         return new JsonResponse($result);
-    }
-
-    public static function getNextId(): int
-    {
-        $filesystem = new Filesystem();
-        $filesystem->mkdir(FileBasedLoanRepository::REPOSITORY_ROOT);
-
-        $finder = new Finder();
-        $finder->files()->in(FileBasedLoanRepository::REPOSITORY_ROOT)->name('*' . FileBasedLoanRepository::FILE_EXTENSION);
-
-        return $finder->count() + 1;
     }
 
     private function isApplication(Request $request): bool

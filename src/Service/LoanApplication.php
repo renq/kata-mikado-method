@@ -8,24 +8,17 @@ use App\Controller\LoanController;
 
 class LoanApplication
 {
-    private int $applicationNo;
     private int $amount;
     private string $contact = '';
     private bool $approved = false;
 
-    public function __construct()
+    public function __construct(private int $applicationNo)
     {
-        $this->applicationNo = LoanController::getNextId();
     }
 
     public function getApplicationNo(): int
     {
         return $this->applicationNo;
-    }
-
-    public function setApplicationNo(int $applicationNo): void
-    {
-        $this->applicationNo = $applicationNo;
     }
 
     public function getAmount(): int

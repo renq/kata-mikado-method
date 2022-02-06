@@ -7,6 +7,13 @@ class MemoryLoanRepository implements LoanRepository
 {
     private array $data = [];
 
+    public static function getNextId(): int
+    {
+        static $i = 0;
+
+        return ++$i;
+    }
+
     public function fetch(int|string $ticketId): LoanApplication
     {
         return $this->data[(int)$ticketId] ?? throw new ApplicationException('Ticket not found');
