@@ -20,7 +20,6 @@ class LoanController
     public const APPLICATION = "apply";
     public const FETCH = "fetch";
     public const TICKET_ID = "ticketId";
-    public const APPROVE = "approve";
 
     public function __construct(private LoanRepository $loanRepository)
     {
@@ -38,8 +37,6 @@ class LoanController
             $result = $normalizer->normalize($ticket);
         } else if ($this->isStatusRequest($request) && $this->idSpecified($request)) {
             $result = $this->fetchLoanInfo($request->get(self::TICKET_ID));
-        } else if ($this->isApproval($request) && $this->idSpecified($request)) {
-            $result = $this->approveLoan($request->get(self::TICKET_ID));
         } else {
             $result = ['error' => 'Incorrect parameters provided'];
         }
@@ -75,18 +72,6 @@ class LoanController
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->normalize($formerApplication);
-    }
-
-    private function isApproval(Request $request): bool
-    {
-        return $request->get('action') === self::APPROVE;
-    }
-
-    private function approveLoan(string $parameter): array
-    {
-        $normalizer = new ObjectNormalizer();
-
-        return $normalizer->normalize($this->loanRepository->approve($parameter));
     }
 
     private function amountFrom(Request $request): int

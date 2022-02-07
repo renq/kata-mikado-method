@@ -54,26 +54,6 @@ final class LoanControllerTest extends WebTestCase
         );
     }
 
-    /** @test */
-    public function loanApplicationsCanBeApproved(): void
-    {
-        $this->loanRepository->store(LoanApplicationMother::create(1));
-
-        $this->client->request('POST', '/', $this->approveParams());
-
-        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
-    }
-
-
-    #[ArrayShape(['action' => 'string', 'ticketId' => 'string'])]
-    private function approveParams(): array
-    {
-        return [
-            'action' => LoanController::APPROVE,
-            'ticketId' => '1',
-        ];
-    }
-
     #[ArrayShape(['action' => 'string', 'amount' => 'string', 'contact' => 'string'])]
     private function applyParams(): array
     {
