@@ -5,15 +5,15 @@ namespace App\Tests\Controller;
 use App\Controller\LoanController;
 use App\Service\LoanRepository;
 use JetBrains\PhpStorm\ArrayShape;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\Request;
 
 use function glob;
 
-final class LoanControllerTest extends TestCase
+final class LoanControllerTest extends WebTestCase
 {
-    private LoanController $loanController;
+    private KernelBrowser $client;
 
     public static function setUpBeforeClass(): void
     {
@@ -23,31 +23,30 @@ final class LoanControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->loanController = new LoanController();
+        $this->client = self::createClient();
     }
 
     /** @test */
     public function incompleteRequest(): void
     {
-        $request = Request::create('/loan');
-        $response = $this->loanController->serve($request);
+        $this->client->request('GET', '/');
 
-        self::assertEquals('{"error":"Incorrect parameters provided"}', $response->getContent());
+        self::assertEquals('{"error":"Incorrect parameters provided"}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
     public function completeApplication(): void
     {
-        $request = Request::create('/loan', 'GET', $this->applyParams());
-        $response = $this->loanController->serve($request);
-        self::assertEquals('{"id":1}', $response->getContent());
+        $this->client->request('GET', '/', $this->applyParams());
+
+        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
     public function givenAnIdTheStatusOfLoanIsReturned(): void
     {
-        $request = Request::create('/loan', 'POST', $this->fetchParams());
-        $response = $this->loanController->serve($request);
+        $this->client->request('POST', '/', $this->fetchParams());
+
         self::assertEquals(
             [
                 'applicationNo' => 1,
@@ -55,16 +54,16 @@ final class LoanControllerTest extends TestCase
                 'contact' => 'donald@ducks.burg',
                 'approved' => false,
             ],
-            json_decode($response->getContent(), true)
+            json_decode($this->client->getResponse()->getContent(), true)
         );
     }
 
     /** @test */
     public function loanApplicationsCanBeApproved(): void
     {
-        $request = Request::create('/loan', 'POST', $this->approveParams());
-        $response = $this->loanController->serve($request);
-        self::assertEquals('{"id":1}', $response->getContent());
+        $this->client->request('POST', '/', $this->approveParams());
+
+        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
     }
 
 
