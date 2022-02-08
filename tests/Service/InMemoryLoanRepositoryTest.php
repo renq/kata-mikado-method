@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class InMemoryLoanRepositoryTest extends TestCase
 {
-    public function testFetch(): void
+    public function testFetchNotExistingApplication(): void
     {
         $inMemoryLoanRepository = new InMemoryLoanRepository();
         $this->expectException(ApplicationException::class);
@@ -27,5 +27,28 @@ class InMemoryLoanRepositoryTest extends TestCase
 
         // Assert
         self::assertEquals($loanApplication, $repository->fetch($ticket->getId()));
+    }
+
+    public function testApproveNotExistingApplication(): void
+    {
+        $repository = new InMemoryLoanRepository();
+
+        $this->expectException(ApplicationException::class);
+        $repository->approve(1);
+    }
+
+
+    public function testApproveExistingApplication(): void
+    {
+        // Arrange
+        $repository = new InMemoryLoanRepository();
+        $loanApplication = new LoanApplication();
+        $ticket = $repository->store($loanApplication);
+
+        // Act
+        $repository->approve($ticket->getId());
+
+        // Assert
+        self::assertTrue($repository->fetch($ticket->getId())->isApproved());
     }
 }

@@ -20,6 +20,10 @@ class InMemoryLoanRepository implements LoanRepository
 
     public function approve(string $ticketId): Ticket
     {
-        // TODO: Implement approve() method.
+        $application = $this->fetch($ticketId);
+        $application->approve();
+        $this->store($application);
+
+        return new Ticket($application->getApplicationNo());
     }
 }
