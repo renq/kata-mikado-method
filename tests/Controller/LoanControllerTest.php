@@ -3,7 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Controller\LoanController;
-use App\Service\LoanRepository;
+use App\Service\FileSystemLoanRepository;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -18,7 +18,7 @@ final class LoanControllerTest extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         $filesystem = new Filesystem();
-        $filesystem->remove(glob(LoanRepository::REPOSITORY_ROOT . '/*.loan'));
+        $filesystem->remove(glob(FileSystemLoanRepository::REPOSITORY_ROOT . '/*.loan'));
     }
 
     protected function setUp(): void
