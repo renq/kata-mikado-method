@@ -24,6 +24,13 @@ class LoanController
     public const TICKET_ID = "ticketId";
     public const APPROVE = "approve";
 
+    private FileSystemLoanRepository $fileSystemLoanRepository;
+
+    public function __construct()
+    {
+        $this->fileSystemLoanRepository = new FileSystemLoanRepository();
+    }
+
     #[Route('/', name: 'loan')]
     public function serve(Request $request): Response
     {
@@ -31,7 +38,7 @@ class LoanController
             $application = new LoanApplication();
             $application->setAmount($this->amountFrom($request));
             $application->setContact($this->contactFrom($request));
-            $ticket = FileSystemLoanRepository::store($application);
+            $ticket = $this->fileSystemLoanRepository->store($application);
             $normalizer = new ObjectNormalizer();
             $result = $normalizer->normalize($ticket);
         } else if ($this->isStatusRequest($request) && $this->idSpecified($request)) {
@@ -80,7 +87,7 @@ class LoanController
 
     private function fetchLoanInfo(string $ticketId): array
     {
-        $formerApplication = FileSystemLoanRepository::fetch($ticketId);
+        $formerApplication = $this->fileSystemLoanRepository->fetch($ticketId);
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->normalize($formerApplication);
@@ -95,7 +102,7 @@ class LoanController
     {
         $normalizer = new ObjectNormalizer();
 
-        return $normalizer->normalize(FileSystemLoanRepository::approve($parameter));
+        return $normalizer->normalize($this->fileSystemLoanRepository->approve($parameter));
     }
 
     private function amountFrom(Request $request): int
