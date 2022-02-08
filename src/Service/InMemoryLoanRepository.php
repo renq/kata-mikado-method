@@ -4,15 +4,18 @@ namespace App\Service;
 
 class InMemoryLoanRepository implements LoanRepository
 {
+    private array $applications = [];
 
     public function fetch(int|string $ticketId): LoanApplication
     {
-        throw new ApplicationException('Ticket not found');
+        return $this->applications[(int)$ticketId] ?? throw new ApplicationException('Ticket not found');
     }
 
     public function store(LoanApplication $application): Ticket
     {
-        // TODO: Implement store() method.
+        $this->applications[$application->getApplicationNo()] = $application;
+
+        return new Ticket($application->getApplicationNo());
     }
 
     public function approve(string $ticketId): Ticket
