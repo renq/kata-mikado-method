@@ -13,7 +13,7 @@ use function file_get_contents;
 use function json_decode;
 use function json_encode;
 
-class FileSystemLoanRepository
+class FileSystemLoanRepository implements LoanRepository
 {
     public const REPOSITORY_ROOT = __DIR__ . '/../../var/repository';
     public const FILE_EXTENSION = '.loan';
