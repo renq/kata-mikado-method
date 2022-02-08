@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Service\LoanApplication;
 use App\Service\FileSystemLoanRepository;
+use App\Service\LoanRepository;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,11 +25,9 @@ class LoanController
     public const TICKET_ID = "ticketId";
     public const APPROVE = "approve";
 
-    private FileSystemLoanRepository $fileSystemLoanRepository;
-
-    public function __construct()
-    {
-        $this->fileSystemLoanRepository = new FileSystemLoanRepository();
+    public function __construct(
+        private LoanRepository $fileSystemLoanRepository
+    ) {
     }
 
     #[Route('/', name: 'loan')]
