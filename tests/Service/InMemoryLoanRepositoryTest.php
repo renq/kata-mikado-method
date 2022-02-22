@@ -20,7 +20,7 @@ class InMemoryLoanRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryLoanRepository();
-        $loanApplication = new LoanApplication();
+        $loanApplication = new LoanApplication(1);
 
         // Act
         $ticket = $repository->store($loanApplication);

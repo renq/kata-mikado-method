@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\FileSystemLoanRepository;
 use App\Service\LoanApplication;
 use App\Service\LoanRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +31,7 @@ class LoanController
     public function serve(Request $request): Response
     {
         if ($this->isApplication($request)) {
-            $application = new LoanApplication();
+            $application = new LoanApplication(FileSystemLoanRepository::getNextId());
             $application->setAmount($this->amountFrom($request));
             $application->setContact($this->contactFrom($request));
             $ticket = $this->fileSystemLoanRepository->store($application);

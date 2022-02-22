@@ -11,9 +11,9 @@ class LoanApplication
     private string $contact = '';
     private bool $approved = false;
 
-    public function __construct()
+    public function __construct(int $applicationNo)
     {
-        $this->applicationNo = FileSystemLoanRepository::getNextId();
+        $this->applicationNo = $applicationNo;
     }
 
     public function getApplicationNo(): int
