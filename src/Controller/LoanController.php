@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\LoanApplication;
-use App\Service\FileSystemLoanRepository;
 use App\Service\LoanRepository;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-
 use function is_numeric;
 use function preg_match;
 
@@ -49,17 +45,6 @@ class LoanController
         }
 
         return new JsonResponse($result);
-    }
-
-    public static function getNextId(): int
-    {
-        $filesystem = new Filesystem();
-        $filesystem->mkdir(FileSystemLoanRepository::REPOSITORY_ROOT);
-
-        $finder = new Finder();
-        $finder->files()->in(FileSystemLoanRepository::REPOSITORY_ROOT)->name('*' . FileSystemLoanRepository::FILE_EXTENSION);
-
-        return $finder->count() + 1;
     }
 
     private function isApplication(Request $request): bool

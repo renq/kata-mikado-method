@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Controller\LoanController;
-
 class LoanApplication
 {
     private int $applicationNo;
@@ -15,7 +13,7 @@ class LoanApplication
 
     public function __construct()
     {
-        $this->applicationNo = LoanController::getNextId();
+        $this->applicationNo = FileSystemLoanRepository::getNextId();
     }
 
     public function getApplicationNo(): int

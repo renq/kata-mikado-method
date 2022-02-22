@@ -10,7 +10,7 @@ action=apply&amount=1230&contact=Lipescu
 POST http://localhost:8010/
 Content-Type: application/x-www-form-urlencoded
 
-action=fetch&ticketId=1
+action=fetch&ticketId=2
 
 ### Approve application
 

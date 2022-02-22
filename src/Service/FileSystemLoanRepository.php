@@ -6,9 +6,8 @@ namespace App\Service;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-
 use function file_get_contents;
 use function json_decode;
 use function json_encode;
@@ -17,6 +16,17 @@ class FileSystemLoanRepository implements LoanRepository
 {
     public const REPOSITORY_ROOT = __DIR__ . '/../../var/repository';
     public const FILE_EXTENSION = '.loan';
+
+    public static function getNextId(): int
+    {
+        $filesystem = new Filesystem();
+        $filesystem->mkdir(FileSystemLoanRepository::REPOSITORY_ROOT);
+
+        $finder = new Finder();
+        $finder->files()->in(FileSystemLoanRepository::REPOSITORY_ROOT)->name('*' . FileSystemLoanRepository::FILE_EXTENSION);
+
+        return $finder->count() + 1;
+    }
 
     public function fetch(string | int $ticketId): LoanApplication
     {
