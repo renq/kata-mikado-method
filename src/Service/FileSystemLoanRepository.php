@@ -17,7 +17,7 @@ class FileSystemLoanRepository implements LoanRepository
     public const REPOSITORY_ROOT = __DIR__ . '/../../var/repository';
     public const FILE_EXTENSION = '.loan';
 
-    public static function getNextId(): int
+    public function getNextId(): int
     {
         $filesystem = new Filesystem();
         $filesystem->mkdir(FileSystemLoanRepository::REPOSITORY_ROOT);

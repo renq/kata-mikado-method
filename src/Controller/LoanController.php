@@ -31,7 +31,7 @@ class LoanController
     public function serve(Request $request): Response
     {
         if ($this->isApplication($request)) {
-            $application = new LoanApplication(FileSystemLoanRepository::getNextId());
+            $application = new LoanApplication($this->fileSystemLoanRepository->getNextId());
             $application->setAmount($this->amountFrom($request));
             $application->setContact($this->contactFrom($request));
             $ticket = $this->fileSystemLoanRepository->store($application);
