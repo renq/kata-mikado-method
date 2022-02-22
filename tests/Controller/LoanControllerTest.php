@@ -4,6 +4,9 @@ namespace App\Tests\Controller;
 
 use App\Controller\LoanController;
 use App\Service\FileSystemLoanRepository;
+use App\Service\InMemoryLoanRepository;
+use App\Service\LoanApplication;
+use App\Service\LoanRepository;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -14,6 +17,7 @@ use function glob;
 final class LoanControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
+    private LoanRepository $loanRepository;
 
     public static function setUpBeforeClass(): void
     {
@@ -24,6 +28,7 @@ final class LoanControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = self::createClient();
+        $this->loanRepository = $this->client->getContainer()->get(LoanRepository::class);
     }
 
     /** @test */
@@ -35,27 +40,42 @@ final class LoanControllerTest extends WebTestCase
     }
 
     /** @test */
-    public function completeApplication(): void
-    {
-        $this->client->request('GET', '/', $this->applyParams());
-
-        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
-    }
-
-    /** @test */
     public function givenAnIdTheStatusOfLoanIsReturned(): void
     {
+        // Arrange
+        $this->loanRepository->store($this->createApplication(1));
+
+        // Act
         $this->client->request('POST', '/', $this->fetchParams());
 
+        // Assert
         self::assertEquals(
             [
                 'applicationNo' => 1,
-                'amount' => 100,
+                'amount' => 10,
                 'contact' => 'donald@ducks.burg',
                 'approved' => false,
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
+    }
+
+    private function createApplication(int $id): LoanApplication
+    {
+        $application = new LoanApplication($id);
+        $application->setAmount(10);
+        $application->setApproved(false);
+        $application->setContact('donald@ducks.burg');
+
+        return $application;
+    }
+
+    /** @test */
+    public function completeApplication(): void
+    {
+        $this->client->request('GET', '/', $this->applyParams());
+
+        self::assertEquals('{"id":2}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
