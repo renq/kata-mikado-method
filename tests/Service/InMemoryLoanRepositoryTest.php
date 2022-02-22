@@ -42,7 +42,7 @@ class InMemoryLoanRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryLoanRepository();
-        $loanApplication = new LoanApplication();
+        $loanApplication = new LoanApplication(1);
         $ticket = $repository->store($loanApplication);
 
         // Act
@@ -50,5 +50,21 @@ class InMemoryLoanRepositoryTest extends TestCase
 
         // Assert
         self::assertTrue($repository->fetch($ticket->getId())->isApproved());
+    }
+
+    public function testGetNextIDForEmptyApp(): void
+    {
+        $repository = new InMemoryLoanRepository();
+
+        self::assertEquals(1, $repository->getNextId());
+    }
+
+    public function testGetNextIDIfThereIsAnotherApplication(): void
+    {
+        $repository = new InMemoryLoanRepository();
+        $loanApplication = new LoanApplication(1);
+        $repository->store($loanApplication);
+
+        self::assertEquals(2, $repository->getNextId());
     }
 }

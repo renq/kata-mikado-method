@@ -6,6 +6,11 @@ class InMemoryLoanRepository implements LoanRepository
 {
     private array $applications = [];
 
+    public function getNextId(): int
+    {
+        return count($this->applications) + 1;
+    }
+
     public function fetch(int|string $ticketId): LoanApplication
     {
         return $this->applications[(int)$ticketId] ?? throw new ApplicationException('Ticket not found');
