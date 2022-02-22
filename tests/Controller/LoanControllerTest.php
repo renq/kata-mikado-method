@@ -19,14 +19,11 @@ final class LoanControllerTest extends WebTestCase
     private KernelBrowser $client;
     private LoanRepository $loanRepository;
 
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
         $filesystem = new Filesystem();
         $filesystem->remove(glob(FileSystemLoanRepository::REPOSITORY_ROOT . '/*.loan'));
-    }
 
-    protected function setUp(): void
-    {
         $this->client = self::createClient();
         $this->loanRepository = $this->client->getContainer()->get(LoanRepository::class);
     }
@@ -37,6 +34,28 @@ final class LoanControllerTest extends WebTestCase
         $this->client->request('GET', '/');
 
         self::assertEquals('{"error":"Incorrect parameters provided"}', $this->client->getResponse()->getContent());
+    }
+
+    /** @test */
+    public function completeApplication(): void
+    {
+        $this->client->request('GET', '/', $this->applyParams());
+
+        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
+    }
+
+    /** @test */
+    public function loanApplicationsCanBeApproved(): void
+    {
+        // Arrange
+        $id = 2;
+        $this->loanRepository->store($this->createApplication($id));
+
+        // Act
+        $this->client->request('POST', '/', $this->approveParams($id));
+
+        // Assert
+        self::assertEquals('{"id":2}', $this->client->getResponse()->getContent());
     }
 
     /** @test */
@@ -70,29 +89,12 @@ final class LoanControllerTest extends WebTestCase
         return $application;
     }
 
-    /** @test */
-    public function completeApplication(): void
-    {
-        $this->client->request('GET', '/', $this->applyParams());
-
-        self::assertEquals('{"id":2}', $this->client->getResponse()->getContent());
-    }
-
-    /** @test */
-    public function loanApplicationsCanBeApproved(): void
-    {
-        $this->client->request('POST', '/', $this->approveParams());
-
-        self::assertEquals('{"id":1}', $this->client->getResponse()->getContent());
-    }
-
-
     #[ArrayShape(['action' => 'string', 'ticketId' => 'string'])]
-    private function approveParams(): array
+    private function approveParams(string $id): array
     {
         return [
             'action' => LoanController::APPROVE,
-            'ticketId' => '1',
+            'ticketId' => $id,
         ];
     }
 
